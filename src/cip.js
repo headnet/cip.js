@@ -155,13 +155,17 @@ function CIPClient(config) {
         }
 
         this.ciprequest("metadata/getcatalogs", {}, function(response) {
-            this.cache.catalogs =  [];
-            
-            for (var i=0; i < response.catalogs.length; i++) {
-                this.cache.catalogs.push(new cip_catalog.CIPCatalog(this, response.catalogs[i]));
+            if(response == null) {
+                callback(null);
+            } else {
+                this.cache.catalogs =  [];
+
+                for (var i=0; i < response.catalogs.length; i++) {
+                    this.cache.catalogs.push(new cip_catalog.CIPCatalog(this, response.catalogs[i]));
+                }
+
+                callback(this.cache.catalogs);
             }
-            
-            callback(this.cache.catalogs);
         });
         
     };
@@ -186,9 +190,12 @@ function CIPClient(config) {
             }, 
             function(response) {
                 // The API returns a collection ID which we will then proceed to enumerate
-                var collection = response.collection;
-                callback(new cip_searchresult.CIPSearchResult(this, response, table.catalog));
-                
+                if(response === null) {
+                    callback(null);
+                } else {
+                    var collection = response.collection;
+                    callback(new cip_searchresult.CIPSearchResult(this, response, table.catalog));
+                }
             }
         );
     };
@@ -213,8 +220,12 @@ function CIPClient(config) {
             }, 
             function(response) {
                 // The API returns a collection ID which we will then proceed to enumerate
-                var collection = response.collection;
-                callback(new cip_searchresult.CIPSearchResult(this, response, table.catalog));
+                if(response === null) {
+                    callback(null);
+                } else {
+                    var collection = response.collection;
+                    callback(new cip_searchresult.CIPSearchResult(this, response, table.catalog));
+                }
             }
         );
     };
