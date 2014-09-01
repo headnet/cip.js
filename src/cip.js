@@ -75,15 +75,19 @@ function CIPClient(config) {
             {
                 url: this.config.endpoint + name + jsessionid_container,
                 method: 'POST',
-                form: queryStringObject
+                form: queryStringObject,
+                timeout: 10000
             },
             function(is_error, response, body) {
-                if(response.statusCode != 200) {
+                if(response == null || response == undefined) {
+                    error(null) || success(null);
+                }
+                else if(response.statusCode != 200) {
                     if(error === undefined) {
                         console.log("No error function defined, calling success(null) :(");
                         success(null);
                     } else {
-                        error(response.body);
+                        error(response.body || null);
                     }
                 } else {
                     success(JSON.parse(response.body));
@@ -109,19 +113,17 @@ function CIPClient(config) {
 
         this.ciprequest("session/open", {user: username, password: password}, 
                         function(response) {
-                            if (response.jsessionid) {
+                            if (response && response != undefined && response.jsessionid) {
                                 self.jsessionid = response.jsessionid;
                                 console.log("Connected to CIP: "+self.jsessionid);
                                 success(response);
                             } else {
-                                debugger;
                                 console.log("SessionID is missing!");
-                                // fail
-                                return;
+                                error(response) || success(null);
                             }
                         },
                         function(response) {
-                            error(response) || console.error("Could not make request to CIP.");
+                            error(response) || success(null);
                         },
                         true);
 
