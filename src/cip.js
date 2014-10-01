@@ -75,7 +75,8 @@ function CIPClient(config) {
             {
                 url: this.config.endpoint + name + jsessionid_container,
                 method: 'POST',
-                form: queryStringObject
+                form: queryStringObject,
+                timeout: 0
             },
             function(is_error, response, body) {
                 if(response == null || response == undefined) {
